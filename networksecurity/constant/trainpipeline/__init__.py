@@ -9,8 +9,8 @@ TARGET_COLUMN='Result'
 train_data_csv:str='train.csv'
 test_data_csv:str='test.csv'
 artifects:str='artifects'
-pipline='networksecuritypipline'
-Filename="networkdata\phisingData.csv"
+pipline:str='networksecuritypipline'
+Filename:str="phisingData_clean.csv"
 
 shema=os.path.join('shemafile','shema.yaml')
 #dataingestion constent
@@ -43,3 +43,5 @@ DATA_IMPUTER_PARAMS:dict={
 }
 DATA_TRANSFORMATION_TRAINING_PATH:str='train.npy'
 DATA_TRANSFORMATION_TESTING_PATH:str='test.npy'
+
+

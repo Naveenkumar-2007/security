@@ -59,7 +59,8 @@ class DATATRANSFORMATION_CONFIG:
     def __init__(self,datatransformation:TRAINING_PIPLINE):
         self.data_transformation_config:str=os.path.join(datatransformation.artifects_dir,trainpipeline.DATA_TRANSFORMATION_FILE_DIR)
         self.data_training_file_trans:str=os.path.join(self.data_transformation_config,trainpipeline.DATA_TRANSFORMATION_DIR,
-                                                       trainpipeline.train_data_csv.replace('csv','npy'),)
+            trainpipeline.train_data_csv.replace('csv','npy'),)
         self.data_testing_file_trans:str=os.path.join(self.data_transformation_config,trainpipeline.DATA_TRANSFORMATION_DIR,
-                                                       trainpipeline.test_data_csv.replace('csv','npy'),)
-        self.data_trans_pre:str=os.path.join(self.data_transformation_config,trainpipeline.DATA_TRANSFORMATION_OBJ,trainpipeline.DATA_VALUDATION_PREPROCSSING)
+            trainpipeline.test_data_csv.replace('csv','npy'),)
+        self.data_trans_pre:str=os.path.join(self.data_transformation_config,trainpipeline.DATA_TRANSFORMATION_OBJ,
+            trainpipeline.DATA_VALUDATION_PREPROCSSING,)
