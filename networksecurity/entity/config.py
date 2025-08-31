@@ -64,3 +64,10 @@ class DATATRANSFORMATION_CONFIG:
             trainpipeline.test_data_csv.replace('csv','npy'),)
         self.data_trans_pre:str=os.path.join(self.data_transformation_config,trainpipeline.DATA_TRANSFORMATION_OBJ,
             trainpipeline.DATA_VALUDATION_PREPROCSSING,)
+        
+class MODELTRAINING_CONFIG:
+    def __init__(self,modeltraining:TRAINING_PIPLINE):
+        self.model_train_config:str=os.path.join(modeltraining.artifects_dir,trainpipeline.MODEL_TRAIN_DIR)
+        self.model_train_save:str=os.path.join(self.model_train_config,trainpipeline.MODEL_TRAIN_DIR_FILE,trainpipeline.MODEL_FILE)
+        self.model_eximate_score:float=trainpipeline.MODEL_EXCPECTED_SCORE
+        self.model_underfitted=trainpipeline.MODEL_UNDERFITTED_VALUE

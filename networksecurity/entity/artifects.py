@@ -17,3 +17,17 @@ class DataTransformationArtifact:
     transformed_train_file_path: str
     transformed_test_file_path: str
     
+@dataclass
+class Modelmetricsevalutor:
+    f1_score:float
+    recall_score:float
+    precision_score:float
+
+@dataclass
+class ModeltrainArtifects:
+    model_train_file:str
+    model_train_metrics:Modelmetricsevalutor
+    model_test_metrics:Modelmetricsevalutor
+
+
+

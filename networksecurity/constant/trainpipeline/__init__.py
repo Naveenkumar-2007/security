@@ -12,6 +12,9 @@ artifects:str='artifects'
 pipline:str='networksecuritypipline'
 Filename:str="phisingData_clean.csv"
 
+MODEL_FILE_PATH=os.path.join('save_model')
+MODEL_FILE='model.pkl'
+
 shema=os.path.join('shemafile','shema.yaml')
 #dataingestion constent
 
@@ -43,5 +46,13 @@ DATA_IMPUTER_PARAMS:dict={
 }
 DATA_TRANSFORMATION_TRAINING_PATH:str='train.npy'
 DATA_TRANSFORMATION_TESTING_PATH:str='test.npy'
+
+##model Training
+MODEL_TRAIN_DIR:str='modelTrain'
+MODEL_TRAIN_DIR_FILE='model'
+MODEL_TRAIN_MODEL_DIR='modle.pkl'
+MODEL_EXCPECTED_SCORE:float=0.6
+MODEL_UNDERFITTED_VALUE:float=0.05
+
 
 

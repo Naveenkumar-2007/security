@@ -4,12 +4,13 @@ import sys
 import numpy as np
 from networksecurity.logging.logger import logging
 from networksecurity.exception.customexception import NetworkSecurityException
-from networksecurity.entity.config import TRAINING_PIPLINE,TRAINING_DATA_INGESTION_CONFIG,DATAVALIDATION_CONFIG,DATATRANSFORMATION_CONFIG
-from networksecurity.entity.artifects import DATA_INGESTION_AR,DATA_VALIDATION_AR,DataTransformationArtifact
+from networksecurity.entity.config import TRAINING_PIPLINE,TRAINING_DATA_INGESTION_CONFIG,DATAVALIDATION_CONFIG,DATATRANSFORMATION_CONFIG,MODELTRAINING_CONFIG
+from networksecurity.entity.artifects import DATA_INGESTION_AR,DATA_VALIDATION_AR,DataTransformationArtifact,Modelmetricsevalutor,ModeltrainArtifects
 from networksecurity.constant import trainpipeline
 from networksecurity.components.data_ingestion import complete_dataingestion
 from networksecurity.components.data_validation import datavalidation
 from networksecurity.components.data_transform import DATA_TRANSFORM
+from networksecurity.components.model_training import ModelTrainer
 if __name__=='__main__':
     data_training=TRAINING_PIPLINE()
     data_Data_ingestion=TRAINING_DATA_INGESTION_CONFIG(data_training)
@@ -24,6 +25,12 @@ if __name__=='__main__':
     data_connect_transform=DATA_TRANSFORM(data_file_valid,data_transform)
     data_transform_complete=data_connect_transform.initiate_Transform()
     print(data_transform_complete)
+    model_train=MODELTRAINING_CONFIG(data_training)
+    model_train_file=ModelTrainer(model_train=model_train,data_transform_complete=data_transform_complete)
+   
+
+
+
 
 
 
