@@ -1,6 +1,6 @@
 import os
 import sys
-
+import numpy as np
 from networksecurity.exception.customexception import NetworkSecurityException 
 from networksecurity.logging.logger import logging
 
@@ -9,9 +9,10 @@ from networksecurity.entity.config import MODELTRAINING_CONFIG
 
 
 
-from networksecurity.utilsfile.metrics.me import NetworkModel,get_classification_score
-from networksecurity.utilsfile.util import save_object,load_object,load_numpy_array_data,save_numpy_array_data,evaluate_models
-
+from networksecurity.utilsfile.metrics.me import NetworkModel
+from networksecurity.utilsfile.util import save_object,load_object
+from networksecurity.utilsfile.util import load_numpy_array_data,evaluate_models
+from networksecurity.utilsfile.metrics.me import get_classification_score
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -22,7 +23,15 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     RandomForestClassifier,
 )
+import mlflow
+#from urllib.parse import urlparse
 
+import dagshub
+#dagshub.init(repo_owner='krishnaik06', repo_name='networksecurity', mlflow=True)
+
+#os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/krishnaik06/networksecurity.mlflow"
+#os.environ["MLFLOW_TRACKING_USERNAME"]="krishnaik06"
+#os.environ["MLFLOW_TRACKING_PASSWORD"]="7104284f1bb44ece21e0e2adb4e36a250ae3251f"
 
 
 
@@ -36,7 +45,30 @@ class ModelTrainer:
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
-    
+    def track_mlflow(self,best_model,classificationmetric):
+        #mlflow.set_registry_uri("https://dagshub.com/krishnaik06/networksecurity.mlflow")
+        #tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+        with mlflow.start_run():
+            f1_score=classificationmetric.f1_score
+            precision_score=classificationmetric.precision_score
+            recall_score=classificationmetric.recall_score
+
+            
+
+            mlflow.log_metric("f1_score",f1_score)
+            mlflow.log_metric("precision",precision_score)
+            mlflow.log_metric("recall_score",recall_score)
+            mlflow.sklearn.log_model(best_model,"model")
+            # Model registry does not work with file store
+            #if tracking_url_type_store != "file":
+
+                # Register the model
+                # There are other ways to use the Model Registry, which depends on the use case,
+                # please refer to the doc for more information:
+                # https://mlflow.org/docs/latest/model-registry.html#api-workflow
+                #mlflow.sklearn.log_model(best_model, "model", registered_model_name=best_model)
+            #else:
+                #mlflow.sklearn.log_model(best_model, "model")
 
 
         
@@ -91,7 +123,8 @@ class ModelTrainer:
 
         classification_train_metric=get_classification_score(y_true=y_train,y_pred=y_train_pred)
         
-        
+        ## Track the experiements with mlflow
+        self.track_mlflow(best_model,classification_train_metric)
 
 
         y_test_pred=best_model.predict(x_test)
@@ -101,20 +134,22 @@ class ModelTrainer:
 
         preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
             
-        model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
+        model_dir_path = os.path.dirname(self.model_trainer_config.model_train_save)
         os.makedirs(model_dir_path,exist_ok=True)
 
         Network_Model=NetworkModel(preprocessor=preprocessor,model=best_model)
-        save_object(self.model_trainer_config.trained_model_file_path,obj=NetworkModel)
+        save_object(self.model_trainer_config.model_train_save,obj=Network_Model)
         #model pusher
         save_object("final_model/model.pkl",best_model)
         
 
         ## Model Trainer Artifact
-        model_trainer_artifact=MODELTRAINING_CONFIG(trained_model_file_path=self.model_trainer_config.model_train_save,
-                             train_metric_artifact=classification_train_metric,
-                             test_metric_artifact=classification_test_metric
-                             )
+        model_trainer_artifact=ModeltrainArtifects(
+                            model_train_file=self.model_trainer_config.model_train_save,
+                            model_train_metrics=classification_train_metric,
+                            model_test_metrics=classification_test_metric
+                        )
+
         logging.info(f"Model trainer artifact: {model_trainer_artifact}")
         return model_trainer_artifact
 
@@ -126,7 +161,7 @@ class ModelTrainer:
     
     
         
-    def initiate_model_trainer(self)->MODELTRAINING_CONFIG:
+    def initiate_model_trainer(self)->ModeltrainArtifects:
         try:
             train_file_path = self.data_transformation_artifact.transformed_train_file_path
             test_file_path = self.data_transformation_artifact.transformed_test_file_path
@@ -141,6 +176,13 @@ class ModelTrainer:
                 test_arr[:, :-1],
                 test_arr[:, -1],
             )
+
+            # ✅ Drop rows where target is NaN
+            mask_train = ~np.isnan(y_train)
+            x_train, y_train = x_train[mask_train], y_train[mask_train]
+
+            mask_test = ~np.isnan(y_test)
+            x_test, y_test = x_test[mask_test], y_test[mask_test]
 
             model_trainer_artifact=self.train_model(x_train,y_train,x_test,y_test)
             return model_trainer_artifact

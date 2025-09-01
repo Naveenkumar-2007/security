@@ -9,12 +9,11 @@ from networksecurity.constant.trainpipeline import shema, TARGET_COLUMN, DATA_IM
 from networksecurity.entity.config import DATATRANSFORMATION_CONFIG
 from networksecurity.entity.artifects import DATA_VALIDATION_AR, DataTransformationArtifact
 from networksecurity.utilsfile.util import read_shema, write_yaml_file, save_numpy_array_data, save_object
-from sklearn.impute import SimpleImputer
+from sklearn.impute import SimpleImputer,KNNImputer
 from sklearn.pipeline import Pipeline
 
 class DATA_TRANSFORM:
-    def __init__(self, data_validation: DATA_VALIDATION_AR,
-                 data_transform_config: DATATRANSFORMATION_CONFIG):
+    def __init__(self, data_validation: DATA_VALIDATION_AR,data_transform_config: DATATRANSFORMATION_CONFIG):
         try:
             self.data_validation: DATA_VALIDATION_AR = data_validation
             self.data_transform_config: DATATRANSFORMATION_CONFIG = data_transform_config
@@ -28,16 +27,17 @@ class DATA_TRANSFORM:
         except Exception as ex:
             raise NetworkSecurityException(ex, sys)
 
-    def get_preprocessing(self) -> Pipeline:
+    def get_preprocessing(cls)-> Pipeline:
         try:
             # Only numeric columns → median works
-            imputer = SimpleImputer(strategy="median")
-            pipeline = Pipeline([('imputer', imputer)])
-            return pipeline
+            imputer:KNNImputer=KNNImputer(**DATA_IMPUTER_PARAMS)
+            #imputer = SimpleImputer(strategy="median")
+            perpoce:KNNImputer= Pipeline([('imputer', imputer)])
+            return perpoce
         except Exception as ex:
             raise NetworkSecurityException(ex, sys)
 
-    def initiate_Transform(self) -> DataTransformationArtifact:
+    def initiate_Transform(self)-> DataTransformationArtifact:
         try:
             logging.info("Starting data transformation")
 
@@ -71,12 +71,12 @@ class DATA_TRANSFORM:
             test_arr = np.c_[transformed_input_test_feature, np.array(target_feature_test_df)]
 
             # Save numpy arrays
-            save_numpy_array_data(self.data_transform_config.data_training_file_trans, array=train_arr)
-            save_numpy_array_data(self.data_transform_config.data_testing_file_trans, array=test_arr)
+            save_numpy_array_data(self.data_transform_config.data_training_file_trans, array=train_arr,)
+            save_numpy_array_data(self.data_transform_config.data_testing_file_trans, array=test_arr,)
 
             # Save preprocessor object
-            save_object(self.data_transform_config.data_trans_pre, preprocessor_object)
-            save_object("final_model/preprocessor.pkl", preprocessor_object)
+            save_object(self.data_transform_config.data_trans_pre, preprocessor_object,)
+            save_object("final_model/preprocessor.pkl", preprocessor_object,)
 
             # Build artifact
             data_transformation_artifact = DataTransformationArtifact(

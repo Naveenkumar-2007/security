@@ -49,7 +49,7 @@ class NetworkDataExtract():
             raise NetworkSecurityException(e,sys)
         
 if __name__=='__main__':
-    FILE_PATH="networkdata/phisingData_clean.csv"
+    FILE_PATH="networkdata\phisingData.csv"
     DATABASE="sample_mflix"
     Collection="comments"
     networkobj=NetworkDataExtract()
