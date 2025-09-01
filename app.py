@@ -30,7 +30,7 @@ collection = database[DATA_INGESTION_COLLECTION]
 st.set_page_config(page_title="Network Security checker", layout="wide")
 st.title("🔐 Network Security using ML ")
 
-menu = ["Home", "Train Model", "Predict"]
+menu = ["Home", "Predict"]
 choice = st.sidebar.radio("Navigation", menu)
 
 # ---------------- Home ----------------
@@ -40,19 +40,7 @@ if choice == "Home":
     st.write("Use the sidebar to train the model or make predictions.")
 
 
-# ---------------- Train Model ----------------
-elif choice == "Train Model":
-    st.subheader("📊 Train the Model")
 
-    if st.button("Start Training"):
-        try:
-            train_pipeline = complete_train_pipline()
-            with st.spinner("Training in progress..."):
-                train_pipeline.run_pipeline()
-            st.success("✅ Training completed successfully!")
-        except Exception as e:
-            st.error(f"❌ Training failed: {e}")
-            raise NetworkSecurityException(e, sys)
 
 
 # ---------------- Predict ----------------
