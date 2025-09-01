@@ -7,4 +7,6 @@ certifi
 python-dotenv
 mlflow
 dagshub
+streamlit
+python-dotenv
 #-e .
