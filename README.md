@@ -46,8 +46,8 @@
 ---
 
 ## 📫 Connect With Me  
-- [GitHub](#)  
-- [LinkedIn](#)  
+- [GitHub](https://github.com/Naveenkumar-2007/)  
+- [LinkedIn](https://www.linkedin.com/in/naveen-kumar-chapala-69980533b/)
 
 ---
 🔐 Project: Network Security Prediction  
@@ -76,3 +76,4 @@ Built using **Streamlit and ML models**, the app simplifies security analysis fo
 
 ---
 ⭐️ **Consistency Creates Breakthroughs **
+
